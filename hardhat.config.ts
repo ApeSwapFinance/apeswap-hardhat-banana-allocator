@@ -10,7 +10,7 @@ import { HardhatRuntimeEnvironment, HttpNetworkUserConfig, NetworkUserConfig } f
 import { Task, Verifier, Network } from './hardhat'
 import { getEnv, Logger, logger, testRunner } from './hardhat/utils'
 import solhintConfig from './solhint.config'
-
+import '@openzeppelin/hardhat-upgrades'
 /**
  * Deploy contracts based on a directory ID in tasks/
  *
@@ -21,10 +21,7 @@ task('deploy', '🫶 Run deployment task')
   .addFlag('force', 'Ignore previous deployments')
   .addOptionalParam('key', 'Etherscan API key to verify contracts')
   .setAction(
-    async (
-      args: { id: string; force?: boolean; key?: string; verbose?: boolean },
-      hre: HardhatRuntimeEnvironment
-    ) => {
+    async (args: { id: string; force?: boolean; key?: string; verbose?: boolean }, hre: HardhatRuntimeEnvironment) => {
       Logger.setDefaults(false, args.verbose || false)
       const key = parseApiKey(hre.network.name as Network, args.key)
       const verifier = key ? new Verifier(hre.network, key) : undefined
@@ -60,24 +57,18 @@ task('verify-contract', '🫶 Run verification for a given contract')
       const key = parseApiKey(hre.network.name as Network, args.key)
       const verifier = key ? new Verifier(hre.network, key) : undefined
 
-      await Task.fromHRE(args.id, hre, verifier).verify(
-        args.name,
-        args.address,
-        args.args
-      )
+      await Task.fromHRE(args.id, hre, verifier).verify(args.name, args.address, args.args)
     }
   )
 
-task('print-tasks', '🫶 Prints available tasks in tasks/ directory').setAction(
-  async (args: { verbose?: boolean }) => {
-    Logger.setDefaults(false, args.verbose || false)
-    logger.log(
-      `Use the following tasks in a variety of ways \nnpx hardhat deploy --id <task-id> --network <network-name> \nnpx hardhat verify-contract --id <task-id> --network <network-name> --name <contract-name> \n`,
-      `🫶`
-    )
-    Task.printAllTask()
-  }
-)
+task('print-tasks', '🫶 Prints available tasks in tasks/ directory').setAction(async (args: { verbose?: boolean }) => {
+  Logger.setDefaults(false, args.verbose || false)
+  logger.log(
+    `Use the following tasks in a variety of ways \nnpx hardhat deploy --id <task-id> --network <network-name> \nnpx hardhat verify-contract --id <task-id> --network <network-name> --name <contract-name> \n`,
+    `🫶`
+  )
+  Task.printAllTask()
+})
 
 /**
  * Example of accessing ethers and performing Web3 calls inside a task
@@ -86,17 +77,13 @@ task('print-tasks', '🫶 Prints available tasks in tasks/ directory').setAction
  * Docs regarding hardhat helper functions added to ethers object:
  * https://github.com/NomicFoundation/hardhat/tree/master/packages/hardhat-ethers#helpers
  */
-task(
-  'blockNumber',
-  '🫶 Prints the current block number',
-  async (_, hre: HardhatRuntimeEnvironment) => {
-    // A provider field is added to ethers, which is an
-    //   ethers.providers.Provider automatically connected to the selected network
-    await hre.ethers.provider.getBlockNumber().then((blockNumber) => {
-      console.log('Current block number: ' + blockNumber)
-    })
-  }
-)
+task('blockNumber', '🫶 Prints the current block number', async (_, hre: HardhatRuntimeEnvironment) => {
+  // A provider field is added to ethers, which is an
+  //   ethers.providers.Provider automatically connected to the selected network
+  await hre.ethers.provider.getBlockNumber().then((blockNumber) => {
+    console.log('Current block number: ' + blockNumber)
+  })
+})
 
 /**
  * Provide additional fork testing options
@@ -104,23 +91,15 @@ task(
  * eg: `npx hardhat test --fork <network-name> --blockNumber <block-number>`
  */
 task(TASK_TEST, '🫶 Test Task')
-  .addOptionalParam(
-    'fork',
-    'Optional network name to be forked block number to fork in case of running fork tests.'
-  )
-  .addOptionalParam(
-    'blockNumber',
-    'Optional block number to fork in case of running fork tests.',
-    undefined,
-    types.int
-  )
+  .addOptionalParam('fork', 'Optional network name to be forked block number to fork in case of running fork tests.')
+  .addOptionalParam('blockNumber', 'Optional block number to fork in case of running fork tests.', undefined, types.int)
   .setAction(testRunner)
 
 export const mainnetMnemonic = getEnv('MAINNET_MNEMONIC')
 export const testnetMnemonic = getEnv('TESTNET_MNEMONIC')
 
 interface NetworkUserConfigExtended extends HttpNetworkUserConfig {
-  getExplorerUrl: (address: string) => string;
+  getExplorerUrl: (address: string) => string
 }
 
 const networkConfig: Record<Network, NetworkUserConfigExtended> = {
@@ -149,9 +128,7 @@ const networkConfig: Record<Network, NetworkUserConfigExtended> = {
     },
   },
   bscTestnet: {
-    url:
-      getEnv('BSC_TESTNET_RPC_URL') ||
-      'https://data-seed-prebsc-1-s1.binance.org:8545',
+    url: getEnv('BSC_TESTNET_RPC_URL') || 'https://data-seed-prebsc-1-s1.binance.org:8545',
     getExplorerUrl: (address: string) => `https://testnet.bscscan.com/address/${address}`,
     chainId: 97,
     accounts: {
@@ -159,8 +136,7 @@ const networkConfig: Record<Network, NetworkUserConfigExtended> = {
     },
   },
   polygon: {
-    url:
-      getEnv('POLYGON_RPC_URL') || 'https://matic-mainnet.chainstacklabs.com',
+    url: getEnv('POLYGON_RPC_URL') || 'https://matic-mainnet.chainstacklabs.com',
     getExplorerUrl: (address: string) => `https://polygonscan.com/address/${address}`,
     chainId: 137,
     accounts: {
@@ -168,8 +144,7 @@ const networkConfig: Record<Network, NetworkUserConfigExtended> = {
     },
   },
   polygonTestnet: {
-    url:
-      getEnv('POLYGON_TESTNET_RPC_URL') || 'https://rpc-mumbai.maticvigil.com/',
+    url: getEnv('POLYGON_TESTNET_RPC_URL') || 'https://rpc-mumbai.maticvigil.com/',
     getExplorerUrl: (address: string) => `https://mumbai.polygonscan.com/address/${address}`,
     chainId: 80001,
     accounts: {
@@ -177,8 +152,7 @@ const networkConfig: Record<Network, NetworkUserConfigExtended> = {
     },
   },
   telos: {
-    url:
-      getEnv('TELOS_RPC_URL') || 'https://mainnet.telos.net/evm',
+    url: getEnv('TELOS_RPC_URL') || 'https://mainnet.telos.net/evm',
     getExplorerUrl: (address: string) => `https://www.teloscan.io/address/${address}`,
     chainId: 40,
     accounts: {
@@ -186,8 +160,7 @@ const networkConfig: Record<Network, NetworkUserConfigExtended> = {
     },
   },
   telosTestnet: {
-    url:
-      getEnv('TELOS_TESTNET_RPC_URL') || 'https://testnet.telos.net/evm',
+    url: getEnv('TELOS_TESTNET_RPC_URL') || 'https://testnet.telos.net/evm',
     getExplorerUrl: (address: string) => `https://testnet.teloscan.io/address/${address}`,
     chainId: 41,
     accounts: {

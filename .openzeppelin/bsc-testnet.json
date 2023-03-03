@@ -1,0 +1,256 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x80e18A6E5DFD1c277eC86A1dD2d97f258Bbd948E",
+    "txHash": "0xd4e80070b341a39c8e48885828f7c9b4fd577ce857afb79786f3e58bfc8d352d"
+  },
+  "proxies": [
+    {
+      "address": "0xe97aA0F66c9D50872b69480e1eFcD343FDdc571b",
+      "txHash": "0x622fd232c6cb41c3addd1f0d182754456767c5e2bb682803a2bac869da0c3063",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "c281f28edf8746c7379ab91607edcc728348d5a63919533f236cd27d5f452200": {
+      "address": "0x52F77F84ae2C47741B8E6ad917bEcA7335e9dfd2",
+      "txHash": "0x361c5fcfbd0009ea3db4c4fab4a2d5da3044f49fe0977715d91a6d01459ebb1c",
+      "layout": {
+        "solcVersion": "0.8.15",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "lockedTokens",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "SweeperUpgradeable",
+            "src": "@ape.swap\\contracts\\contracts\\v0.8\\token\\SweeperUpgradeable.sol:53"
+          },
+          {
+            "label": "allowNativeSweep",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_bool",
+            "contract": "SweeperUpgradeable",
+            "src": "@ape.swap\\contracts\\contracts\\v0.8\\token\\SweeperUpgradeable.sol:53"
+          },
+          {
+            "label": "masterApe",
+            "offset": 1,
+            "slot": "102",
+            "type": "t_contract(IMasterApeV2)4138",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:55"
+          },
+          {
+            "label": "bananaToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)2091",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:55"
+          },
+          {
+            "label": "anyBanana",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_address",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:57"
+          },
+          {
+            "label": "anyswapRouter",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IAnyswapV4Router)3967",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:57"
+          },
+          {
+            "label": "getBananaRouteFromPid",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_uint256,t_struct(BananaRoute)2899_storage)",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:66"
+          },
+          {
+            "label": "bananaRoutesSet",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_struct(UintSet)2735_storage",
+            "contract": "BananaAllocator",
+            "src": "contracts\\BananaAllocator.sol:68"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IAnyswapV4Router)3967": {
+            "label": "contract IAnyswapV4Router",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)2091": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMasterApeV2)4138": {
+            "label": "contract IMasterApeV2",
+            "numberOfBytes": "20"
+          },
+          "t_enum(ActionId)2902": {
+            "label": "enum BananaAllocator.ActionId",
+            "members": [
+              "SIMPLE",
+              "BRIDGE"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(BananaRoute)2899_storage)": {
+            "label": "mapping(uint256 => struct BananaAllocator.BananaRoute)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(BananaRoute)2899_storage": {
+            "label": "struct BananaAllocator.BananaRoute",
+            "members": [
+              {
+                "label": "toAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "actionId",
+                "type": "t_enum(ActionId)2902",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "chainId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "minimumBanana",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Set)2277_storage": {
+            "label": "struct EnumerableSet.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(UintSet)2735_storage": {
+            "label": "struct EnumerableSet.UintSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)2277_storage",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

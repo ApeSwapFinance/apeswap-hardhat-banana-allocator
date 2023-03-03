@@ -1,4 +1,7 @@
-import { ethers } from 'hardhat'
+import hre from 'hardhat'
+import '@nomicfoundation/hardhat-chai-matchers'
+import { ethers, upgrades } from 'hardhat'
+const { getDeployConfig } = require('../deploy-config')
 
 /**
  * // NOTE: This is an example of the default hardhat deployment approach.
@@ -6,18 +9,32 @@ import { ethers } from 'hardhat'
  * its own task in ../tasks/ organized by date.
  */
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000)
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS
+  const accounts = await ethers.getSigners()
+  const network = hre.network.name
+  let { masterApe, bananaAddress, anyBanana, anyswapRouter } = getDeployConfig(network, accounts)
 
-  const lockedAmount = ethers.utils.parseEther('1')
+  const BananaAllocator = await ethers.getContractFactory('BananaAllocator')
 
-  const Lock = await ethers.getContractFactory('Lock')
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount })
+  //BNB TESTNET
+  const bananaRoutes = [
+    {
+      farmPid: 7,
+      farmToken: '0x30E74ceFD298990880758E20223f03129F52E699',
+      toAddress: '0x5c7C7246bD8a18DF5f6Ee422f9F8CCDF716A6aD2',
+      actionId: 0,
+      chainId: 0,
+      minimumBanana: 0,
+    },
+  ]
 
-  await lock.deployed()
+  const allocator = await upgrades.deployProxy(BananaAllocator, [masterApe, bananaAddress, anyBanana, anyswapRouter])
+  await allocator.deployed()
+  console.log('Allocator deployed to:', allocator.address)
 
-  console.log('Lock with 1 ETH deployed to:', lock.address)
+  // const bananaAllocator = await BananaAllocator.at(BananaAllocator.address);
+  // bananaRoutes.forEach(async (route) => {
+  //   await bananaAllocator.addBananaRoute(route.name, route.farmPid, route.farmToken, route.toAddress, route.actionId, route.chainId, route.minimumBanana);
+  // })
 }
 
 // We recommend this pattern to be able to use async/await everywhere
