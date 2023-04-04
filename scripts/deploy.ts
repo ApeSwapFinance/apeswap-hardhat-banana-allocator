@@ -1,7 +1,7 @@
 import hre from 'hardhat'
 import '@nomicfoundation/hardhat-chai-matchers'
 import { ethers, upgrades } from 'hardhat'
-const { getDeployConfig } = require('../deploy-config')
+import { getDeployConfig, convertAddressesToExplorerLinks } from '../deploy-config'
 
 /**
  * // NOTE: This is an example of the default hardhat deployment approach.
@@ -11,7 +11,7 @@ const { getDeployConfig } = require('../deploy-config')
 async function main() {
   const accounts = await ethers.getSigners()
   const network = hre.network.name
-  let { masterApe, bananaAddress, anyBanana, anyswapRouter } = getDeployConfig(network, accounts)
+  let { masterApe, bananaAddress, anyBanana, anyswapRouter, adminAddress, explorerLink } = getDeployConfig(network, accounts)
 
   const BananaAllocator = await ethers.getContractFactory('BananaAllocator')
 
@@ -26,15 +26,26 @@ async function main() {
       minimumBanana: 0,
     },
   ]
-
-  const allocator = await upgrades.deployProxy(BananaAllocator, [masterApe, bananaAddress, anyBanana, anyswapRouter])
-  await allocator.deployed()
-  console.log('Allocator deployed to:', allocator.address)
-
+  //  NOTE: To add routes during deployment
   // const bananaAllocator = await BananaAllocator.at(BananaAllocator.address);
   // bananaRoutes.forEach(async (route) => {
   //   await bananaAllocator.addBananaRoute(route.name, route.farmPid, route.farmToken, route.toAddress, route.actionId, route.chainId, route.minimumBanana);
   // })
+
+  const allocator = await upgrades.deployProxy(BananaAllocator, [masterApe, bananaAddress, anyBanana, anyswapRouter])
+  await allocator.deployed()
+
+  await allocator.transferOwnership(adminAddress);
+
+  const [currentOwner, currentAnyBanana, currentAnySwapRouter, currentMasterApe] = await Promise.all([
+    allocator.owner(),
+    allocator.anyBanana(),
+    allocator.anyswapRouter(),
+    allocator.masterApe(),
+  ])
+    
+  const output = { allocator: allocator.address, currentOwner, currentAnyBanana, currentAnySwapRouter, currentMasterApe }
+  console.dir(convertAddressesToExplorerLinks(output, explorerLink, true), { depth: null })
 }
 
 // We recommend this pattern to be able to use async/await everywhere
