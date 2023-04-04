@@ -19,19 +19,19 @@ pragma solidity 0.8.15;
  * Twitter:         https://twitter.com/ape_swap
  * Telegram:        https://t.me/ape_swap
  * Announcements:   https://t.me/ape_swap_news
- * Discord:         https://discord.com/ApeSwap
  * Reddit:          https://reddit.com/r/ApeSwap
  * Instagram:       https://instagram.com/ApeSwap.finance
  * GitHub:          https://github.com/ApeSwapFinance
  */
 
+import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@ape.swap/contracts/contracts/v0.8/token/SweeperUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "./lib/IMasterApeV2.sol";
 import "./lib/IAnyswapV4Router.sol";
 
-contract BananaAllocator is SweeperUpgradeable {
+contract BananaAllocator is SweeperUpgradeable, AccessControlEnumerableUpgradeable {
     using EnumerableSet for EnumerableSet.UintSet;
 
     IMasterApeV2 public masterApe;
@@ -53,6 +53,14 @@ contract BananaAllocator is SweeperUpgradeable {
 
     mapping(uint256 => BananaRoute) public getBananaRouteFromPid;
     EnumerableSet.UintSet private bananaRoutesSet;
+    bytes32 public constant MOVER_ROLE = keccak256("MOVER_ROLE");
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 
     event MovedBanana(uint256 pid, uint256 amount, address to, uint256 chainId);
     event AddedBananaRoute(
@@ -65,12 +73,26 @@ contract BananaAllocator is SweeperUpgradeable {
     event RemovedBananaRoute(uint256 pid);
     event ChangedBananaMinimum(uint256 pid, uint256 newMinimum);
 
+    /**
+     * @dev Modifier to make a function callable only by a certain role. In
+     * addition to checking the sender's role, `address(0)` 's role is also
+     * considered. Granting a role to `address(0)` is equivalent to enabling
+     * this role for everyone.
+     */
+    modifier onlyRoleOrOpenRole(bytes32 role) {
+        if (!hasRole(role, address(0))) {
+            _checkRole(role, _msgSender());
+        }
+        _;
+    }
+
     function initialize(
         IMasterApeV2 _masterApe,
         IERC20 _bananaToken,
         address _anyBanana,
         IAnyswapV4Router _anyswapRouter
     ) public initializer {
+        __AccessControlEnumerable_init();
         initializeSweeper(new address[](0), true);
         masterApe = _masterApe;
         bananaToken = _bananaToken;
@@ -92,9 +114,13 @@ contract BananaAllocator is SweeperUpgradeable {
         return bananaRoutesSet.length();
     }
 
+    // ==================================================
+    /// @dev MOVER_ROLE functions
+    // ==================================================
+
     /// @notice Move banana based on index
     /// @param index index of banana route to move banana
-    function moveBananaIndex(uint256 index) external {
+    function moveBananaIndex(uint256 index) external onlyRoleOrOpenRole(MOVER_ROLE) {
         uint256 _bananaRoutesLength = bananaRoutesLength();
         require(index < _bananaRoutesLength, "BananaAllocator: Index out of bounds");
         _moveBanana(bananaRoutesSet.at(index), true);
@@ -102,7 +128,7 @@ contract BananaAllocator is SweeperUpgradeable {
 
     /// @notice Move banana for all banana routes
     /// @param revert_ revert if one fails
-    function moveBananaAll(bool revert_) external {
+    function moveBananaAll(bool revert_) external onlyRoleOrOpenRole(MOVER_ROLE) {
         uint256 _bananaRoutesLength = bananaRoutesLength();
         for (uint256 index = 0; index < _bananaRoutesLength; index++) {
             _moveBanana(bananaRoutesSet.at(index), revert_);
@@ -111,14 +137,14 @@ contract BananaAllocator is SweeperUpgradeable {
 
     /// @notice Move banana based on farm pid
     /// @param pid farm pid of banana route to move banana
-    function moveBananaPid(uint256 pid) external {
+    function moveBananaPid(uint256 pid) external onlyRoleOrOpenRole(MOVER_ROLE) {
         _moveBanana(pid, true);
     }
 
     /// @notice Move banana based on multiple farm pids
     /// @param pids farm pids of banana route to move banana
     /// @param revert_ revert if one fails
-    function moveBananaPids(uint256[] memory pids, bool revert_) external {
+    function moveBananaPids(uint256[] memory pids, bool revert_) external onlyRoleOrOpenRole(MOVER_ROLE) {
         for (uint256 index = 0; index < pids.length; index++) {
             _moveBanana(pids[index], revert_);
         }
@@ -159,6 +185,26 @@ contract BananaAllocator is SweeperUpgradeable {
         emit MovedBanana(pid, newTokens, bananaRoute.toAddress, bananaRoute.chainId);
     }
 
+    // ==================================================
+    /// @dev onlyOwner functions
+    // ==================================================
+
+    /// @notice Grant array of addresses the MOVER_ROLE
+    /// @param _movers Array of addresses to grant as movers
+    function grantMoverRole(address[] calldata _movers) external onlyOwner {
+        for (uint i = 0; i < _movers.length; i++) {
+            _grantRole(MOVER_ROLE, _movers[i]);
+        }
+    }
+
+    /// @notice Revoke array of addresses the MOVER_ROLE
+    /// @param _movers Array of addresses to revoke as movers
+    function revokeMoverRole(address[] calldata _movers) external onlyOwner {
+        for (uint i = 0; i < _movers.length; i++) {
+            _revokeRole(MOVER_ROLE, _movers[i]);
+        }
+    }
+
     /// @notice Add a banana route
     /// @param farmPid farm pid
     /// @param toAddress address the banana should transfer to
@@ -172,8 +218,9 @@ contract BananaAllocator is SweeperUpgradeable {
         uint256 chainId,
         uint256 minimumBanana
     ) external onlyOwner {
-        if (actionId == ActionId.BRIDGE)
+        if (actionId == ActionId.BRIDGE) {
             require(chainId != 0 && chainId != block.chainid, "BananaAllocator: wrong settings");
+        }
 
         require(toAddress != address(0), "BananaAllocator: Can't send to null address");
         BananaRoute memory tempRoute = getBananaRouteFromPid[farmPid];
