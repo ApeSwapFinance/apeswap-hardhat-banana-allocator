@@ -18,12 +18,14 @@ describe('BananaAllocator', function () {
     })
 
     const allocator = await bananaAllocator__factory.deploy()
-    await allocator.connect(owner).initialize(
-      masterApeV2.address,
-      bananaToken.address,
-      '0xb52da8102e715d5E220aaE2eF58E9F978fCdEB3F',
-      '0xABd380327Fe66724FFDa91A87c772FB8D00bE488'
-    )
+    await allocator
+      .connect(owner)
+      .initialize(
+        masterApeV2.address,
+        bananaToken.address,
+        '0xb52da8102e715d5E220aaE2eF58E9F978fCdEB3F',
+        '0xABd380327Fe66724FFDa91A87c772FB8D00bE488'
+      )
 
     const ghost1 = await ERC20Mintable__factory.deploy('Ghost1', 'G1')
     await ghost1.mint(allocator.address, ether('1'))
@@ -37,7 +39,7 @@ describe('BananaAllocator', function () {
     await allocator.connect(owner).addBananaRoute(1, ghost1location.address, 0, 0, 0)
     await allocator.connect(owner).addBananaRoute(2, ghost2location.address, 0, 0, 0)
     await allocator.connect(owner).addBananaRoute(3, ghost3location.address, 0, 0, ether('987654321'))
-    await allocator.connect(owner).grantMoverRole([mover.address]);
+    await allocator.connect(owner).grantMoverRole([mover.address])
 
     return {
       bananaToken,
@@ -211,7 +213,9 @@ describe('BananaAllocator', function () {
 
     await mine(1)
 
-    await expect(allocator.connect(mover).moveBananaPids([1, 2, 3], true)).to.be.revertedWith('BananaAllocator: not enough rewards')
+    await expect(allocator.connect(mover).moveBananaPids([1, 2, 3], true)).to.be.revertedWith(
+      'BananaAllocator: not enough rewards'
+    )
     await expect(allocator.connect(mover).moveBananaAll(true)).to.be.revertedWith('BananaAllocator: not enough rewards')
   })
 
@@ -253,7 +257,7 @@ describe('BananaAllocator', function () {
     expect(length.toString()).eq('2')
   })
 
-  it("Should(onlyRoleOrOpenRole) allow any address to move when address(0) has MOVER_ROLE", async () => {
+  it('Should(onlyRoleOrOpenRole) allow any address to move when address(0) has MOVER_ROLE', async () => {
     const {
       bananaToken,
       masterApeV2,
@@ -270,18 +274,20 @@ describe('BananaAllocator', function () {
 
     const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-    await allocator.connect(owner).stakeFarm(1);
+    await allocator.connect(owner).stakeFarm(1)
     await allocator.connect(owner).grantMoverRole([ZERO_ADDRESS])
 
-    await time.increase(1);
+    await time.increase(1)
 
-    const pendingRewards = await masterApeV2.pendingBanana(1, allocator.address);
-    await allocator.connect(notMover).moveBananaPid(1);
+    const pendingRewards = await masterApeV2.pendingBanana(1, allocator.address)
+    await allocator.connect(notMover).moveBananaPid(1)
 
-    const balance = await bananaToken.balanceOf(ghost1location);
+    const balance = await bananaToken.balanceOf(ghost1location)
     expect(Number(balance)).gt(Number(pendingRewards))
 
-    await allocator.connect(owner).revokeMoverRole([ZERO_ADDRESS]);
-    await expect(allocator.connect(notMover).moveBananaAll(false)).to.be.revertedWith(`AccessControl: account ${notMover.address.toLowerCase()} is missing role 0xe5ed70e23144309ce456cb48bf5e6d0d8e160f094a6d65ecf1d5b03cf292d8e6`)
-});
+    await allocator.connect(owner).revokeMoverRole([ZERO_ADDRESS])
+    await expect(allocator.connect(notMover).moveBananaAll(false)).to.be.revertedWith(
+      `AccessControl: account ${notMover.address.toLowerCase()} is missing role 0xe5ed70e23144309ce456cb48bf5e6d0d8e160f094a6d65ecf1d5b03cf292d8e6`
+    )
+  })
 })

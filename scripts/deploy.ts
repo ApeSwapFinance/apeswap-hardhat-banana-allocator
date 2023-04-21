@@ -11,7 +11,10 @@ import { getDeployConfig, convertAddressesToExplorerLinks } from '../deploy-conf
 async function main() {
   const accounts = await ethers.getSigners()
   const network = hre.network.name
-  let { masterApe, bananaAddress, anyBanana, anyswapRouter, adminAddress, explorerLink } = getDeployConfig(network, accounts)
+  let { masterApe, bananaAddress, anyBanana, anyswapRouter, adminAddress, explorerLink } = getDeployConfig(
+    network,
+    accounts
+  )
 
   const BananaAllocator = await ethers.getContractFactory('BananaAllocator')
 
@@ -35,7 +38,7 @@ async function main() {
   const allocator = await upgrades.deployProxy(BananaAllocator, [masterApe, bananaAddress, anyBanana, anyswapRouter])
   await allocator.deployed()
 
-  await allocator.transferOwnership(adminAddress);
+  await allocator.transferOwnership(adminAddress)
 
   const [currentOwner, currentAnyBanana, currentAnySwapRouter, currentMasterApe] = await Promise.all([
     allocator.owner(),
@@ -43,8 +46,14 @@ async function main() {
     allocator.anyswapRouter(),
     allocator.masterApe(),
   ])
-    
-  const output = { allocator: allocator.address, currentOwner, currentAnyBanana, currentAnySwapRouter, currentMasterApe }
+
+  const output = {
+    allocator: allocator.address,
+    currentOwner,
+    currentAnyBanana,
+    currentAnySwapRouter,
+    currentMasterApe,
+  }
   console.dir(convertAddressesToExplorerLinks(output, explorerLink, true), { depth: null })
 }
 
