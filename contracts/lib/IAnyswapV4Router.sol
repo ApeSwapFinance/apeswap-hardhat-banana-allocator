@@ -11,29 +11,13 @@ interface IAnyswapV4Router {
 
     function changeVault(address token, address newVault) external returns (bool);
 
-    function _anySwapOut(
-        address from,
-        address token,
-        address to,
-        uint256 amount,
-        uint256 toChainID
-    ) external;
+    function _anySwapOut(address from, address token, address to, uint256 amount, uint256 toChainID) external;
 
     // Swaps `amount` `token` from this chain to `toChainID` chain with recipient `to`
-    function anySwapOut(
-        address token,
-        address to,
-        uint256 amount,
-        uint256 toChainID
-    ) external;
+    function anySwapOut(address token, address to, uint256 amount, uint256 toChainID) external;
 
     // Swaps `amount` `token` from this chain to `toChainID` chain with recipient `to` by minting with `underlying`
-    function anySwapOutUnderlying(
-        address token,
-        address to,
-        uint256 amount,
-        uint256 toChainID
-    ) external;
+    function anySwapOutUnderlying(address token, address to, uint256 amount, uint256 toChainID) external;
 
     function anySwapOutUnderlyingWithPermit(
         address from,
@@ -67,41 +51,17 @@ interface IAnyswapV4Router {
     ) external;
 
     // swaps `amount` `token` in `fromChainID` to `to` on this chainID
-    function _anySwapIn(
-        bytes32 txs,
-        address token,
-        address to,
-        uint256 amount,
-        uint256 fromChainID
-    ) external;
+    function _anySwapIn(bytes32 txs, address token, address to, uint256 amount, uint256 fromChainID) external;
 
     // swaps `amount` `token` in `fromChainID` to `to` on this chainID
     // triggered by `anySwapOut`
-    function anySwapIn(
-        bytes32 txs,
-        address token,
-        address to,
-        uint256 amount,
-        uint256 fromChainID
-    ) external;
+    function anySwapIn(bytes32 txs, address token, address to, uint256 amount, uint256 fromChainID) external;
 
     // swaps `amount` `token` in `fromChainID` to `to` on this chainID with `to` receiving `underlying`
-    function anySwapInUnderlying(
-        bytes32 txs,
-        address token,
-        address to,
-        uint256 amount,
-        uint256 fromChainID
-    ) external;
+    function anySwapInUnderlying(bytes32 txs, address token, address to, uint256 amount, uint256 fromChainID) external;
 
     // swaps `amount` `token` in `fromChainID` to `to` on this chainID with `to` receiving `underlying` if possible
-    function anySwapInAuto(
-        bytes32 txs,
-        address token,
-        address to,
-        uint256 amount,
-        uint256 fromChainID
-    ) external;
+    function anySwapInAuto(bytes32 txs, address token, address to, uint256 amount, uint256 fromChainID) external;
 
     // extracts mpc fee from bridge fees
     function anySwapFeeTo(address token, uint256 amount) external;
@@ -116,11 +76,7 @@ interface IAnyswapV4Router {
 
     // **** SWAP ****
     // requires the initial amount to have already been sent to the first pair
-    function _swap(
-        uint256[] memory amounts,
-        address[] memory path,
-        address _to
-    ) external;
+    function _swap(uint256[] memory amounts, address[] memory path, address _to) external;
 
     // sets up a cross-chain trade from this chain to `toChainID` for `path` trades to `to`
     function anySwapOutExactTokensForTokens(
@@ -243,11 +199,7 @@ interface IAnyswapV4Router {
     ) external;
 
     // **** LIBRARY FUNCTIONS ****
-    function quote(
-        uint256 amountA,
-        uint256 reserveA,
-        uint256 reserveB
-    ) external pure returns (uint256 amountB);
+    function quote(uint256 amountA, uint256 reserveA, uint256 reserveB) external pure returns (uint256 amountB);
 
     function getAmountOut(
         uint256 amountIn,

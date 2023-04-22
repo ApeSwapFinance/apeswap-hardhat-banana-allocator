@@ -55,21 +55,13 @@ interface IMasterApeV2 is IContractWhitelist {
 
     function updatePool(uint256 _pid) external; // validatePool(_pid);
 
-    function depositTo(
-        uint256 _pid,
-        uint256 _amount,
-        address _to
-    ) external; // validatePool(_pid);
+    function depositTo(uint256 _pid, uint256 _amount, address _to) external; // validatePool(_pid);
 
     function deposit(uint256 _pid, uint256 _amount) external; // validatePool(_pid);
 
     function withdraw(uint256 _pid, uint256 _amount) external; // validatePool(_pid);
 
-    function withdrawTo(
-        uint256 _pid,
-        uint256 _amount,
-        address _to
-    ) external; // validatePool(_pid);
+    function withdrawTo(uint256 _pid, uint256 _amount, address _to) external; // validatePool(_pid);
 
     function emergencyWithdraw(uint256 _pid) external;
 
@@ -89,7 +81,9 @@ interface IMasterApeV2 is IContractWhitelist {
 
     function userInfo(uint256, address) external view returns (uint256 amount, uint256 rewardDebt);
 
-    function getPoolInfo(uint256 _pid)
+    function getPoolInfo(
+        uint256 _pid
+    )
         external
         view
         returns (

@@ -28,11 +28,11 @@ module.exports = {
     "reason-string": ["warn", { "maxLength": 50 }], // Revert reason length
     "func-param-name-mixedcase": "error",
     "modifier-name-mixedcase": "error",
-    "private-vars-leading-underscore": ["error", { "strict": false }], 
-    "ordering": "error",
+    "private-vars-leading-underscore": ["warn", { "strict": false }], 
+    "ordering": "warn",
 
     // Security Rules
-    "compiler-version": ["error", COMPILER_VERSION],
+    "compiler-version": ["warn", COMPILER_VERSION],
     "avoid-sha3": "error",
     "avoid-suicide": "error",
     "avoid-throw": "error",

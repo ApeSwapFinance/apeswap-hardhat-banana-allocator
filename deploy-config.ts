@@ -1,6 +1,7 @@
 type LinkAddress = (address: string) => string
 
 interface NetworkConfig {
+  adminAddress: string
   apeRouterAddress: string
   masterApe: string
   bananaAddress: string
@@ -21,6 +22,7 @@ export function getDeployConfig(network: string, accounts: { address: string }[]
   if (['bsc', 'bsc-fork'].includes(network)) {
     console.log(`Deploying with BSC MAINNET config.`)
     return {
+      adminAddress: '0x',
       apeRouterAddress: '0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7',
       masterApe: '0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9',
       bananaAddress: '0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95',
@@ -33,6 +35,7 @@ export function getDeployConfig(network: string, accounts: { address: string }[]
   } else if (['bscTestnet', 'bscTestnet-fork'].includes(network)) {
     console.log(`Deploying with BSC testnet config.`)
     return {
+      adminAddress: '0x',
       apeRouterAddress: '0x3380aE82e39E42Ca34EbEd69aF67fAa0683Bb5c1',
       masterApe: '0x35C57A4646Ee69fFD571Ed84140Ab490740255FD',
       bananaAddress: '0xeccef280ff6c5f6556456e5a6ccd3450f1c57867',
@@ -45,6 +48,7 @@ export function getDeployConfig(network: string, accounts: { address: string }[]
   } else if (['polygon', 'polygon-fork'].includes(network)) {
     console.log(`Deploying with POLYGON MAINNET config.`)
     return {
+      adminAddress: '0x',
       apeRouterAddress: '0x',
       masterApe: '0x',
       bananaAddress: '0x',
@@ -56,6 +60,7 @@ export function getDeployConfig(network: string, accounts: { address: string }[]
   } else if (['polygonTestnet', 'polygonTestnet-fork'].includes(network)) {
     console.log(`Deploying with POLYGON testnet config.`)
     return {
+      adminAddress: '0x',
       apeRouterAddress: '0x',
       masterApe: '0x',
       bananaAddress: '0x',
@@ -67,6 +72,7 @@ export function getDeployConfig(network: string, accounts: { address: string }[]
   } else if (['localhost', 'hardhat'].includes(network)) {
     console.log(`Deploying with localhost config.`)
     return {
+      adminAddress: '0x',
       apeRouterAddress: '0x',
       masterApe: '0x',
       bananaAddress: '0x',
